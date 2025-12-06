@@ -15,7 +15,7 @@ on:
         description: 'Do you want to create a release?'
         required: true
         type: boolean
-        default: true
+        default: false
       kernels_to_build:
         description: |
           Comma-separated list of kernels to build/release, e.g.:
@@ -61,7 +61,7 @@ on:
         description: "是否启用内核层面阻止对关键分区/设备节点的非法写入(LSM)？"
         required: true
         type: boolean
-        default: false
+        default: true
       get_manager:
         description: 'Get the latest KSU Manager at the same time?'
         required: true
