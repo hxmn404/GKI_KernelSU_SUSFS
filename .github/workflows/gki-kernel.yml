@@ -28,9 +28,6 @@ on:
       kernelsu_branch:
         required: true
         type: string
-      # kernelsu_branch_other:
-      #   required: false
-      #   type: string
       revision:
         required: false
         type: string
@@ -62,18 +59,17 @@ jobs:
       CCACHE_HARDLINK: "true"
 
     steps:
-      - name: Maximize Build Space
-        uses: AdityaGarg8/remove-unwanted-software@v5
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: 🚀 Optimize Build Disk Space
+        uses: TukangHantam/optimize-build-space@main
         with:
-          remove-dotnet: 'true'          # Frees ~2 GB
-          remove-android: 'true'         # Frees ~9 GB
-          remove-haskell: 'true'         # Frees ~5.2 GB
-          remove-codeql: 'true'          # Frees ~5.4 GB
-          remove-docker-images: 'true'   # Frees ~3.2 GB
-          remove-large-packages: 'true'  # Frees ~3.1 GB
-          remove-swapfile: 'true'        # Frees ~4 GB
-          remove-cached-tools: 'false'   # Avoid unless confirmed safe
-          verbose: 'true'                # Enable detailed logging
+          remove-dotnet: 'true'         # Frees ~2 GB
+          remove-haskell: 'true'        # Frees ~5.2 GB
+          remove-codeql: 'true'         # Frees ~5.4 GB
+          remove-docker-images: 'true'  # Frees ~3.2 GB
+          verbose: 'true'               # Show detailed logging of the action
           
       - name: 设定 CONFIG 环境变量
         run: |
@@ -86,8 +82,14 @@ jobs:
           echo "CONFIG set to: $CONFIG"
 
       # Install ccache
-      - name: 安装 ccache
-        run: sudo apt update && sudo apt upgrade -y && sudo apt install -y ccache python3 git curl
+      - name: Install Dependencies + APTC
+        uses: awalsh128/cache-apt-pkgs-action@latest 
+        with: 
+          packages: ccache python3 git curl
+          execute_install_scripts: true
+          
+      # - name: 安装 ccache
+      #   run: sudo apt update && sudo apt upgrade -y && sudo apt install -y ccache python3 git curl
 
       - name: 配置 ccache
         run: |
